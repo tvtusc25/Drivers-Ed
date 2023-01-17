@@ -10,43 +10,18 @@ screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 # Set the title of the window
 pygame.display.set_caption("DriversEd")
 
-def game_over():
-    level = 0
-    # 1st parameter is the font file
-    # 2nd parameter is size of the font
-    font = pygame.font.Font('freesansbold.ttf', 32)
-    # create a text surface object on which text is drawn on it.
-    text = font.render('GAME OVER: Level {} passed'.format(level), True, "white")    
-    # create a rectangular object for the text surface object
-    textRect = text.get_rect()
-    # set the center of the rectangular object.
-    textRect.center = (size[0] // 2, size[1] // 2)
-    running = True
-    keys = pygame.key.get_pressed()
-    for opacity in range(0, 255, 15):
-            work_img = pygame.image.load("black_screen.png")
-            work_img.set_alpha(opacity)
-            print("hello")
-            screen.blit(work_img, (0,0))
-            pygame.display.flip()
-            pygame.time.delay(100)
-    while running:
-        screen.blit(text, textRect)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            if keys[pygame.K_SPACE]:
-                print("hello")
-                # can include call to first level to restart 
-        pygame.display.flip()
-    pygame.quit()
+# set timer
+FONT = pygame.font.SysFont("Sans", 20)
+TEXT_COLOR = (0, 0, 0)
+start_time = pygame.time.get_ticks()
 
 class Background:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.image = pygame.image.load("2lanestreet.png")
+        self.image = pygame.image.load("FinalIntersection.png")
         self.rect = self.image.get_rect()
+        self.rect.center = (self.x, self.y)
 
 class Car:
     def __init__(self, x, y):
@@ -100,9 +75,12 @@ class Car:
             self.current_image = self.turn_right_image
             self.image = pygame.transform.rotate(self.turn_right_image, self.angle)
             self.rect = self.image.get_rect(center=(self.x, self.y))
-
-player_car = Car(500, 500)
-background = Background(500, 500)
+            
+#first level car and background images
+player_car = Car(740, 860)
+background = Background(734, 400)
+background1 = Background(283, 824)
+background1.image = pygame.transform.rotate(background1.image, 90)
 
 running = True
 clock = pygame.time.Clock()
@@ -114,15 +92,22 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
-
+    
     screen.fill((0, 255, 0))
     screen.blit(background.image, background.rect)
+    screen.blit(background1.image, background1.rect)
 
     screen.blit(player_car.image, player_car.rect)
     player_car.handle_keys()
     player_car.update()
     
+    
+    if start_time:
+        time_since_enter = (pygame.time.get_ticks() - start_time) / 1000
+        message = 'Timer: ' + str(time_since_enter) + ' seconds'
+        screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
+    
     pygame.display.flip()
+
 
 pygame.quit()
