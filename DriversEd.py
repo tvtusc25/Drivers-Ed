@@ -10,6 +10,37 @@ screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 # Set the title of the window
 pygame.display.set_caption("DriversEd")
 
+def game_over():
+    level = 0
+    # 1st parameter is the font file
+    # 2nd parameter is size of the font
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    # create a text surface object on which text is drawn on it.
+    text = font.render('GAME OVER: Level {} passed'.format(level), True, "white")    
+    # create a rectangular object for the text surface object
+    textRect = text.get_rect()
+    # set the center of the rectangular object.
+    textRect.center = (size[0] // 2, size[1] // 2)
+    running = True
+    keys = pygame.key.get_pressed()
+    for opacity in range(0, 255, 15):
+            work_img = pygame.image.load("black_screen.png")
+            work_img.set_alpha(opacity)
+            print("hello")
+            screen.blit(work_img, (0,0))
+            pygame.display.flip()
+            pygame.time.delay(100)
+    while running:
+        screen.blit(text, textRect)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if keys[pygame.K_SPACE]:
+                print("hello")
+                # can include call to first level to restart 
+        pygame.display.flip()
+    pygame.quit()
+
 class Background:
     def __init__(self, x, y):
         self.x = x
