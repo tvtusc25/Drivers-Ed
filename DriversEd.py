@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 
 # Initialize Pygame
 pygame.init()
@@ -11,7 +12,7 @@ screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("DriversEd")
 
 # set timer
-FONT = pygame.font.SysFont("Sans", 20)
+FONT = pygame.font.SysFont("Sans", 30)
 TEXT_COLOR = (0, 0, 0)
 start_time = pygame.time.get_ticks()
 
@@ -32,7 +33,6 @@ def game_over():
           'grey84', 'grey85', 'grey86', 'grey87', 'grey88', 'grey89', 'grey90', 'grey91', 'grey92',
           'grey93', 'grey94', 'grey95', 'grey97', 'grey98', 'grey99']
     for i in range(95, -1, -1):
-        print(grey_list[i])
         pygame.draw.rect(screen, grey_list[i], pygame.Rect(0,0, screen.get_size()[0], screen.get_size()[1]))
         pygame.display.flip()
         pygame.time.delay(10)
@@ -125,6 +125,7 @@ background1.image = pygame.transform.rotate(background1.image, 90)
 
 running = True
 clock = pygame.time.Clock()
+num = random.randint(0,2)
 
 while running:
     #set max frame rate to 60 fps
