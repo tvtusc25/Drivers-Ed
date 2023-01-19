@@ -132,10 +132,14 @@ class Car:
 #start screen
 start = game_start(700,500)
 #start button
-startButton = start_button(700,500)
+startButton = start_button(700,450)
 #first level car and intersection images
 player_car = Car(740, 860)
-intersection = Intersection(734, 400)
+# horizontal road
+intersection = Intersection(735, 450)
+# vertical road
+intersection_vertical = Intersection(1390, -205)
+intersection_vertical.image = pygame.transform.rotate(intersection_vertical.image, 90)
 intersection1 = Intersection(283, 824)
 intersection1.image = pygame.transform.rotate(intersection1.image, 90)
 #road extensions
@@ -144,7 +148,7 @@ intersection2.image = pygame.transform.rotate(intersection2.image, 90)
 intersection3 = Intersection(0, 824)
 intersection3.image = pygame.transform.rotate(intersection3.image, 90)
 #stop sign
-sign = Sign(780, 450)
+sign = Sign(825, 500)
 
 running = True
 clock = pygame.time.Clock()
@@ -169,9 +173,11 @@ while running:
     if startBool == True:
         screen.fill((0, 255, 0))
         screen.blit(intersection.image, intersection.rect)
-        screen.blit(intersection3.image, intersection3.rect)
-        screen.blit(intersection2.image, intersection2.rect)
-        screen.blit(intersection1.image, intersection1.rect)
+        screen.blit(intersection_vertical.image, intersection_vertical.rect)
+        # These three blits below are appearing in weird places and don't add anything to the scene
+        # screen.blit(intersection3.image, intersection3.rect)
+        # screen.blit(intersection2.image, intersection2.rect)
+        # screen.blit(intersection1.image, intersection1.rect)
         instructions(num)
         
         screen.blit(player_car.image, player_car.rect)
