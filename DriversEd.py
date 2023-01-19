@@ -6,10 +6,14 @@ import random
 pygame.init()
 
 # Set the size of the window
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((1000, 750))
 
 # Set the title of the window
 pygame.display.set_caption("DriversEd")
+
+#game music
+soundObj = pygame.mixer.Sound("song1.mp3")
+soundObj.play()
 
 # set timer
 FONT = pygame.font.SysFont("Sans", 30)
@@ -57,7 +61,15 @@ def game_over():
     y = int(screen.get_size()[1]/2)
     message = ('GAME OVER: Level {} passed'.format(level))
     screen.blit(FONT.render(message, True, "white"), (x, y))
-        
+
+class Grass:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.image = pygame.image.load("grass.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = (self.x, self.y)
+
 class Intersection:
     def __init__(self, x, y):
         self.x = x
@@ -130,34 +142,33 @@ class Car:
             game_over()
             
 #start screen
-start = game_start(700,500)
+start = game_start(500,375)
 #start button
-startButton = start_button(700,450)
+startButton = start_button(500,500)
 #first level car and intersection images
-player_car = Car(740, 860)
-# horizontal road
-intersection = Intersection(735, 450)
-# vertical road
-intersection_vertical = Intersection(1390, -205)
-intersection_vertical.image = pygame.transform.rotate(intersection_vertical.image, 90)
-intersection1 = Intersection(283, 824)
+player_car = Car(540, 710)
+intersection = Intersection(534, 400)
+intersection1 = Intersection(83, 824)
 intersection1.image = pygame.transform.rotate(intersection1.image, 90)
 #road extensions
-intersection2 = Intersection(600, 824)
+intersection2 = Intersection(400, 824)
 intersection2.image = pygame.transform.rotate(intersection2.image, 90)
 intersection3 = Intersection(0, 824)
 intersection3.image = pygame.transform.rotate(intersection3.image, 90)
 #stop sign
-sign = Sign(825, 500)
+sign = Sign(580, 450)
 
 running = True
 clock = pygame.time.Clock()
 num = random.randint(0,2)
 startBool = False
 
+screen.blit(start.image, start.rect)
+screen.blit(startButton.image, startButton.rect)
+
 while running:
     #set max frame rate to 70 fps
-    clock.tick(70)
+    clock.tick(50)
     pygame.event.pump()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -166,18 +177,13 @@ while running:
             mouse_pos = pygame.mouse.get_pos()
             if startButton.rect.collidepoint(mouse_pos):
                 startBool = True
-                
-    screen.blit(start.image, start.rect)
-    screen.blit(startButton.image, startButton.rect)
     
     if startBool == True:
         screen.fill((0, 255, 0))
         screen.blit(intersection.image, intersection.rect)
-        screen.blit(intersection_vertical.image, intersection_vertical.rect)
-        # These three blits below are appearing in weird places and don't add anything to the scene
-        # screen.blit(intersection3.image, intersection3.rect)
-        # screen.blit(intersection2.image, intersection2.rect)
-        # screen.blit(intersection1.image, intersection1.rect)
+        screen.blit(intersection3.image, intersection3.rect)
+        screen.blit(intersection2.image, intersection2.rect)
+        screen.blit(intersection1.image, intersection1.rect)
         instructions(num)
         
         screen.blit(player_car.image, player_car.rect)
@@ -192,5 +198,6 @@ while running:
             screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
     
     pygame.display.flip()
+
 
 pygame.quit()
