@@ -16,6 +16,22 @@ FONT = pygame.font.SysFont("Sans", 30)
 TEXT_COLOR = (0, 0, 0)
 start_time = pygame.time.get_ticks()
 
+class game_start:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.image = pygame.image.load("title.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = (self.x, self.y)
+
+class start_button:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.image = pygame.image.load("start_button.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = (self.x, self.y)
+
 def instructions(num):
     message = ["Make a left turn", "Make a right turn", "Go straight"]
     screen.blit(FONT.render(message[num], True, "black"), (20, 50))
@@ -41,24 +57,20 @@ def game_over():
     y = int(screen.get_size()[1]/2)
     message = ('GAME OVER: Level {} passed'.format(level))
     screen.blit(FONT.render(message, True, "white"), (x, y))
-    running = True
-    keys = pygame.key.get_pressed()
-    while running:
-        # screen.blit(text, textRect)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                running = False
-            if keys[pygame.K_SPACE]:
-                print("hello")
-                # can include call to first level to restart 
-        pygame.display.flip()
         
-class Background:
+class Intersection:
     def __init__(self, x, y):
         self.x = x
         self.y = y
         self.image = pygame.image.load("FinalIntersection.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = (self.x, self.y)
+        
+class Sign:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.image = pygame.image.load("stop_sign.png")
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
 
@@ -117,39 +129,62 @@ class Car:
         if keys[pygame.K_1]:
             game_over()
             
-#first level car and background images
+#start screen
+start = game_start(700,500)
+#start button
+startButton = start_button(700,500)
+#first level car and intersection images
 player_car = Car(740, 860)
-background = Background(734, 400)
-background1 = Background(283, 824)
-background1.image = pygame.transform.rotate(background1.image, 90)
+intersection = Intersection(734, 400)
+intersection1 = Intersection(283, 824)
+intersection1.image = pygame.transform.rotate(intersection1.image, 90)
+#road extensions
+intersection2 = Intersection(600, 824)
+intersection2.image = pygame.transform.rotate(intersection2.image, 90)
+intersection3 = Intersection(0, 824)
+intersection3.image = pygame.transform.rotate(intersection3.image, 90)
+#stop sign
+sign = Sign(780, 450)
 
 running = True
 clock = pygame.time.Clock()
 num = random.randint(0,2)
+startBool = False
 
 while running:
-    #set max frame rate to 60 fps
-    clock.tick(60)
+    #set max frame rate to 70 fps
+    clock.tick(70)
     pygame.event.pump()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            if startButton.rect.collidepoint(mouse_pos):
+                startBool = True
+                
+    screen.blit(start.image, start.rect)
+    screen.blit(startButton.image, startButton.rect)
     
-    screen.fill((0, 255, 0))
-    screen.blit(background.image, background.rect)
-    screen.blit(background1.image, background1.rect)
-    instructions(num)
-    screen.blit(player_car.image, player_car.rect)
-    player_car.handle_keys()
-    player_car.update()
+    if startBool == True:
+        screen.fill((0, 255, 0))
+        screen.blit(intersection.image, intersection.rect)
+        screen.blit(intersection3.image, intersection3.rect)
+        screen.blit(intersection2.image, intersection2.rect)
+        screen.blit(intersection1.image, intersection1.rect)
+        instructions(num)
+        
+        screen.blit(player_car.image, player_car.rect)
+        player_car.handle_keys()
+        player_car.update()
+        
+        screen.blit(sign.image, sign.rect)
     
-    
-    if start_time:
-        time_since_enter = (pygame.time.get_ticks() - start_time) / 1000
-        message = 'Timer: ' + str(time_since_enter) + ' seconds'
-        screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
+        if start_time:
+            time_since_enter = (pygame.time.get_ticks() - start_time) / 1000
+            message = 'Timer: ' + str(time_since_enter) + ' seconds'
+            screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
     
     pygame.display.flip()
-
 
 pygame.quit()
