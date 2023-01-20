@@ -6,7 +6,7 @@ import random
 pygame.init()
 
 # Set the size of the window
-screen = pygame.display.set_mode((1000, 750))
+screen = pygame.display.set_mode((950, 750))
 
 # Set the title of the window
 pygame.display.set_caption("DriversEd")
@@ -147,14 +147,11 @@ start = game_start(500,375)
 startButton = start_button(500,500)
 #first level car and intersection images
 player_car = Car(540, 710)
-intersection = Intersection(534, 400)
-intersection1 = Intersection(83, 824)
+# vertical intersection
+intersection = Intersection(490, 350)
+# horizontal interesection
+intersection1 = Intersection(39, 774)
 intersection1.image = pygame.transform.rotate(intersection1.image, 90)
-#road extensions
-intersection2 = Intersection(400, 824)
-intersection2.image = pygame.transform.rotate(intersection2.image, 90)
-intersection3 = Intersection(0, 824)
-intersection3.image = pygame.transform.rotate(intersection3.image, 90)
 #stop sign
 sign = Sign(580, 450)
 
@@ -181,8 +178,6 @@ while running:
     if startBool == True:
         screen.fill((0, 255, 0))
         screen.blit(intersection.image, intersection.rect)
-        screen.blit(intersection3.image, intersection3.rect)
-        screen.blit(intersection2.image, intersection2.rect)
         screen.blit(intersection1.image, intersection1.rect)
         instructions(num)
         
