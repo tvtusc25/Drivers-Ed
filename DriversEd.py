@@ -152,8 +152,17 @@ intersection = Intersection(490, 350)
 # horizontal interesection
 intersection1 = Intersection(39, 774)
 intersection1.image = pygame.transform.rotate(intersection1.image, 90)
-#stop sign
-sign = Sign(580, 450)
+#stop sign that player's car approaches
+sign = Sign(530, 425)
+# stop sign to right of player
+sign2 = Sign(530, 320)
+sign2.image = pygame.transform.rotate(sign2.image, 90)
+# stop sign opposite of player
+sign3 = Sign(420, 300)
+sign3.image = pygame.transform.rotate(sign3.image, 180)
+# stop sign to left of player
+sign4 = Sign(400, 430)
+sign4.image = pygame.transform.rotate(sign4.image, 270)
 
 running = True
 clock = pygame.time.Clock()
@@ -178,6 +187,7 @@ while running:
     if startBool == True:
         screen.fill((0, 255, 0))
         screen.blit(intersection.image, intersection.rect)
+
         screen.blit(intersection1.image, intersection1.rect)
         instructions(num)
         
@@ -186,6 +196,9 @@ while running:
         player_car.update()
         
         screen.blit(sign.image, sign.rect)
+        screen.blit(sign2.image, sign2.rect)
+        screen.blit(sign3.image, sign3.rect)
+        screen.blit(sign4.image, sign4.rect)
     
         if start_time:
             time_since_enter = (pygame.time.get_ticks() - start_time) / 1000
