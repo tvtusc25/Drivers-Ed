@@ -44,6 +44,14 @@ class Grass:
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
 
+class Instruction:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.image = pygame.image.load("diagram.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = (self.x, self.y)
+
 class Intersection:
     def __init__(self, x, y):
         self.x = x
@@ -181,6 +189,8 @@ def first_level():
 def instructions(num):
     message = ["Make a left turn", "Make a right turn", "Go straight"]
     screen.blit(FONT.render(message[num], True, "black"), (20, 50))
+    diagram = Instruction(120, 165)
+    screen.blit(diagram.image, diagram.rect)
 
 def game_over():
     grey_list = ['grey1', 'grey2', 'grey3', 'grey4', 'grey5', 'grey6', 'grey7', 'grey8', 'grey9', 'grey10',
@@ -206,7 +216,7 @@ def game_over():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 first_level()
         pygame.display.flip()
 
