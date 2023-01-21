@@ -119,8 +119,6 @@ class Car:
 start = game_start(500,375)
 #start button
 startButton = start_button(500,500)
-#first level car and intersection images
-player_car = Car(540, 710)
 # vertical intersection
 intersection = Intersection(490, 350)
 # horizontal interesection
@@ -146,7 +144,7 @@ screen.blit(startButton.image, startButton.rect)
 pygame.display.flip()
 
 def first_level():
-    player_car = Car(540, 710)
+    player_car = Car(503, 710)
     while True:
         clock.tick(50)
         pygame.event.pump()
@@ -164,6 +162,9 @@ def first_level():
         screen.blit(sign4.image, sign4.rect)
         # checks if player crosses a certain point on map, can be used to translate to level two
         # num is a random number that refers to the instructions function that generates which way the user should go 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
         if player_car.rect.left < 50 and num == 0:
             print("leftworks")
         elif player_car.rect.left > 850 and num == 1:
@@ -175,6 +176,7 @@ def first_level():
             message = 'Timer: ' + str(time_since_enter) + ' seconds'
             screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
         pygame.display.flip()
+        
 
 def instructions(num):
     message = ["Make a left turn", "Make a right turn", "Go straight"]
@@ -199,7 +201,7 @@ def game_over():
     level = 0
     message = ('GAME OVER: Level {} passed'.format(level))
     running = True
-    screen.blit(FONT.render(message, True, "white"), (475, 375))
+    screen.blit(FONT.render(message, True, "white"), (300, 375))
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
