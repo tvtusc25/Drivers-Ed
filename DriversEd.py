@@ -1,6 +1,5 @@
 import pygame
 import math
-import random
 
 # Initialize Pygame
 pygame.init()
@@ -67,6 +66,14 @@ class Sign:
         self.image = pygame.image.load("stop_sign.png")
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
+        
+class Red_Zone:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.image = pygame.image.load("fail.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = (self.x, self.y)
 
 class Car:
     def __init__(self, x, y):
@@ -123,74 +130,26 @@ class Car:
         if keys[pygame.K_1]:
             game_over()
             
-#start screen
-start = game_start(500,375)
-#start button
-startButton = start_button(500,500)
-# vertical intersection
-intersection = Intersection(490, 350)
-# horizontal interesection
-intersection1 = Intersection(39, 774)
-intersection1.image = pygame.transform.rotate(intersection1.image, 90)
-#stop sign that player's car approaches
-sign = Sign(530, 425)
-# stop sign to right of player
-sign2 = Sign(530, 320)
-sign2.image = pygame.transform.rotate(sign2.image, 90)
-# stop sign opposite of player
-sign3 = Sign(420, 300)
-sign3.image = pygame.transform.rotate(sign3.image, 180)
-# stop sign to left of player
-sign4 = Sign(400, 430)
-sign4.image = pygame.transform.rotate(sign4.image, 270)
+def instructions(num):
+    message = ["Make a Left Turn", "Make a Right Turn", "Go Straight"]
+    screen.blit(FONT.render(message[num], True, "black"), (20, 50))
+    diagram = Instruction(120, 650)
+    screen.blit(diagram.image, diagram.rect)
 
-clock = pygame.time.Clock()
-num = random.randint(0,2)
-
-screen.blit(start.image, start.rect)
-screen.blit(startButton.image, startButton.rect)
-pygame.display.flip()
-
-def first_level():
-    player_car = Car(503, 710)
+def start_screen():
     while True:
+        screen.blit(start.image, start.rect)
+        screen.blit(startButton.image, startButton.rect)
+        pygame.display.flip()
         clock.tick(50)
         pygame.event.pump()
-        screen.fill((0, 255, 0))
-        screen.blit(intersection.image, intersection.rect)
-        screen.blit(intersection1.image, intersection1.rect)
-        instructions(num)
-        screen.blit(player_car.image, player_car.rect)
-        player_car.handle_keys()
-        player_car.update()
-                
-        screen.blit(sign.image, sign.rect)
-        screen.blit(sign2.image, sign2.rect)
-        screen.blit(sign3.image, sign3.rect)
-        screen.blit(sign4.image, sign4.rect)
-        # checks if player crosses a certain point on map, can be used to translate to level two
-        # num is a random number that refers to the instructions function that generates which way the user should go 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-        if player_car.rect.left < 50 and num == 0:
-            print("leftworks")
-        elif player_car.rect.left > 850 and num == 1:
-            print("rightworks")
-        elif player_car.rect.top < 0 and num == 2:
-            print("straightworks")
-        elif start_time:
-            time_since_enter = (pygame.time.get_ticks() - start_time) / 1000
-            message = 'Timer: ' + str(time_since_enter) + ' seconds'
-            screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
-        pygame.display.flip()
-        
-
-def instructions(num):
-    message = ["Make a left turn", "Make a right turn", "Go straight"]
-    screen.blit(FONT.render(message[num], True, "black"), (20, 50))
-    diagram = Instruction(120, 165)
-    screen.blit(diagram.image, diagram.rect)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if startButton.rect.collidepoint(mouse_pos):
+                    first_level()
 
 def game_over():
     grey_list = ['grey1', 'grey2', 'grey3', 'grey4', 'grey5', 'grey6', 'grey7', 'grey8', 'grey9', 'grey10',
@@ -208,29 +167,134 @@ def game_over():
         pygame.draw.rect(screen, grey_list[i], pygame.Rect(0,0, screen.get_size()[0], screen.get_size()[1]))
         pygame.display.flip()
         pygame.time.delay(10)
-    level = 0
-    message = ('GAME OVER: Level {} passed'.format(level))
-    running = True
+    message = ('GAME OVER: Level {} Failed'.format(level))
     screen.blit(FONT.render(message, True, "white"), (300, 375))
-    while running:
+    pygame.display.flip()
+    pygame.time.delay(1000)
+    start_screen()
+
+def first_level():
+    player_car = Car(503, 710)
+    while True:
+        #frame rate is 50
+        clock.tick(50)
+        pygame.event.pump()
+        #blit fail zones
+        screen.blit(fail1.image, fail1.rect)
+        screen.blit(fail2.image, fail2.rect)
+        screen.blit(fail3.image, fail3.rect)
+        screen.blit(fail4.image, fail4.rect)
+        screen.fill((0, 255, 0))
+        #blit intersections
+        screen.blit(intersection.image, intersection.rect)
+        screen.blit(intersection1.image, intersection1.rect)
+        #go straight instruction
+        instructions(2)
+        #blit car and update
+        screen.blit(player_car.image, player_car.rect)
+        player_car.handle_keys()
+        player_car.update()
+        #blit sign
+        screen.blit(sign.image, sign.rect)
+        # checks if player crosses a certain point on map, can be used to translate to level two
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                first_level()
+        if player_car.rect.top < 0:
+            second_level()
+        if player_car.rect.colliderect(fail1.rect) or player_car.rect.colliderect(fail2.rect) or player_car.rect.colliderect(fail3.rect) or player_car.rect.colliderect(fail4.rect):
+            game_over()
+        if start_time:
+            time_since_enter = (pygame.time.get_ticks() - start_time) / 1000
+            message = 'Timer: ' + str(time_since_enter) + ' seconds'
+            screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
         pygame.display.flip()
 
-running = True
-while running:
-    #set max frame rate to 70 fps
-    clock.tick(50)
-    pygame.event.pump()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = pygame.mouse.get_pos()
-            if startButton.rect.collidepoint(mouse_pos):
-                first_level() 
-
+def second_level():
+    player_car = Car(503, 710)
+    while True:
+        clock.tick(50)
+        pygame.event.pump()
+        #blit fail zones
+        screen.blit(fail1.image, fail1.rect)
+        screen.blit(fail2.image, fail2.rect)
+        screen.blit(fail3.image, fail3.rect)
+        screen.blit(fail4.image, fail4.rect)
+        screen.fill((0, 255, 0))
+        screen.blit(intersection.image, intersection.rect)
+        screen.blit(intersection1.image, intersection1.rect)
+        instructions(0)
+        screen.blit(player_car.image, player_car.rect)
+        player_car.handle_keys()
+        player_car.update()
+        screen.blit(sign.image, sign.rect)
+        # checks if player crosses a certain point on map, can be used to translate to level two
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        if player_car.rect.left < 50:
+            third_level()
+        if player_car.rect.colliderect(fail1.rect) or player_car.rect.colliderect(fail2.rect) or player_car.rect.colliderect(fail3.rect) or player_car.rect.colliderect(fail4.rect):
+            game_over()
+        if start_time:
+            time_since_enter = (pygame.time.get_ticks() - start_time) / 1000
+            message = 'Timer: ' + str(time_since_enter) + ' seconds'
+            screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
+        pygame.display.flip()
+        
+def third_level():
+    player_car = Car(503, 710)
+    while True:
+        clock.tick(50)
+        pygame.event.pump()
+        #blit fail zones
+        screen.blit(fail1.image, fail1.rect)
+        screen.blit(fail2.image, fail2.rect)
+        screen.blit(fail3.image, fail3.rect)
+        screen.blit(fail4.image, fail4.rect)
+        screen.fill((0, 255, 0))
+        screen.blit(intersection.image, intersection.rect)
+        screen.blit(intersection1.image, intersection1.rect)
+        instructions(1)
+        screen.blit(player_car.image, player_car.rect)
+        player_car.handle_keys()
+        player_car.update()
+        screen.blit(sign.image, sign.rect)
+        # checks if player crosses a certain point on map, can be used to translate to level two
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        if player_car.rect.left > 850:
+            print("rightworks")
+        if player_car.rect.colliderect(fail1.rect) or player_car.rect.colliderect(fail2.rect) or player_car.rect.colliderect(fail3.rect) or player_car.rect.colliderect(fail4.rect):
+            game_over()
+        if start_time:
+            time_since_enter = (pygame.time.get_ticks() - start_time) / 1000
+            message = 'Timer: ' + str(time_since_enter) + ' seconds'
+            screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
+        pygame.display.flip()
+        
+#start screen
+start = game_start(475,375)
+#start button
+startButton = start_button(475,500)
+# vertical intersection
+intersection = Intersection(490, 350)
+# horizontal interesection
+intersection1 = Intersection(39, 774)
+intersection1.image = pygame.transform.rotate(intersection1.image, 90)
+#fail zones
+fail1 = Red_Zone(190,110)
+fail2 = Red_Zone(800,110)
+fail3 = Red_Zone(190,580)
+fail4 = Red_Zone(800,580)
+#stop sign that player's car approaches
+sign = Sign(530, 425)
+#level number
+level = 1
+#clock
+clock = pygame.time.Clock()
+#start game screen
+start_screen()
+#quit sequence
 pygame.quit()
