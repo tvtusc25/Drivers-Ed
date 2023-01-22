@@ -192,6 +192,18 @@ def game_over(code, level):
     pygame.time.delay(1000)
     start_screen()
 
+def win(time):
+    green_list = ['green4', 'green3', 'green2', 'green1']
+    for i in range(4):
+        pygame.draw.rect(screen, green_list[i], pygame.Rect(0,0, screen.get_size()[0], screen.get_size()[1]))
+        pygame.display.flip()
+        pygame.time.delay(10)
+    message = ('PASSED: In {} Seconds'.format(time))
+    screen.blit(FONT.render(message, True, "white"), (375, 375))
+    pygame.display.flip()
+    pygame.time.delay(3000)
+    pygame.quit()
+
 def first_level():
     #stop/zone flag
     stopped = False
@@ -322,6 +334,7 @@ def third_level():
     stopped = False
     in_zone = False
     player_car = Car(503, 710)
+    time = 0
     while True:
         clock.tick(50)
         pygame.event.pump()
@@ -352,7 +365,7 @@ def third_level():
                     if player_car.current_image != player_car.turn_right_image:
                         game_over(3,3)
         if player_car.rect.left > 850:
-            print("rightworks")
+            win(time)
         elif player_car.rect.left < 50:
             game_over(1, 3)
         elif player_car.rect.top < 0:
@@ -373,6 +386,7 @@ def third_level():
         if start_time:
             time_since_enter = (pygame.time.get_ticks() - start_time) / 1000
             message = 'Timer: ' + str(time_since_enter) + ' seconds'
+            time = time_since_enter
             screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
         pygame.display.flip()
         
