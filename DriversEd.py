@@ -8,7 +8,7 @@ pygame.init()
 screen = pygame.display.set_mode((950, 750))
 
 #Game Over Messages
-game_over_mess = ["Failure to Stop", "Failure to Follow Instructions", "Failure to Maintain Lane"]
+game_over_mess = ["Failure to Stop", "Failure to Follow Instructions", "Failure to Maintain Lane", "Failure to Use Turn Signal"]
 game_over_code = 0
 
 # Set the title of the window
@@ -223,6 +223,15 @@ def first_level():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+            keys = pygame.key.get_pressed()
+            if player_car.speed > 0.1 or player_car.speed < -0.1:
+                if keys[pygame.K_LEFT]:
+                    if player_car.current_image != player_car.turn_left_image:
+                        game_over(3,1)
+                if keys[pygame.K_RIGHT]:
+                    if player_car.current_image != player_car.turn_right_image:
+                        game_over(3,1)
+        #road direction win/lose
         if player_car.rect.top < 0:
             second_level()
         elif player_car.rect.left > 850:
@@ -275,6 +284,14 @@ def second_level():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+            keys = pygame.key.get_pressed()
+            if player_car.speed > 0.1 or player_car.speed < -0.1:
+                if keys[pygame.K_LEFT]:
+                    if player_car.current_image != player_car.turn_left_image:
+                        game_over(3,2)
+                if keys[pygame.K_RIGHT]:
+                    if player_car.current_image != player_car.turn_right_image:
+                        game_over(3,2)
         if player_car.rect.left < 50:
             third_level()
         elif player_car.rect.left > 850:
@@ -326,6 +343,14 @@ def third_level():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+            keys = pygame.key.get_pressed()
+            if player_car.speed > 0.1 or player_car.speed < -0.1:
+                if keys[pygame.K_LEFT]:
+                    if player_car.current_image != player_car.turn_left_image:
+                        game_over(3,3)
+                if keys[pygame.K_RIGHT]:
+                    if player_car.current_image != player_car.turn_right_image:
+                        game_over(3,3)
         if player_car.rect.left > 850:
             print("rightworks")
         elif player_car.rect.left < 50:
