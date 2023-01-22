@@ -226,9 +226,9 @@ def first_level():
         #go straight instruction
         instructions(2)
         #blit car and update
-        screen.blit(player_car.image, player_car.rect)
         player_car.handle_keys()
         player_car.update()
+        screen.blit(player_car.image, player_car.rect)
         #blit sign
         screen.blit(sign.image, sign.rect)
         # checks if player crosses a certain point on map, can be used to translate to level two
@@ -288,9 +288,9 @@ def second_level():
         screen.blit(intersection.image, intersection.rect)
         screen.blit(intersection1.image, intersection1.rect)
         instructions(0)
-        screen.blit(player_car.image, player_car.rect)
         player_car.handle_keys()
         player_car.update()
+        screen.blit(player_car.image, player_car.rect)
         screen.blit(sign.image, sign.rect)
         # checks if player crosses a certain point on map, can be used to translate to level two
         for event in pygame.event.get():
@@ -348,9 +348,9 @@ def third_level():
         screen.blit(intersection.image, intersection.rect)
         screen.blit(intersection1.image, intersection1.rect)
         instructions(1)
-        screen.blit(player_car.image, player_car.rect)
         player_car.handle_keys()
         player_car.update()
+        screen.blit(player_car.image, player_car.rect)
         screen.blit(sign.image, sign.rect)
         # checks if player crosses a certain point on map, can be used to translate to level two
         for event in pygame.event.get():
