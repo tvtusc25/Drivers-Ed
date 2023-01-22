@@ -8,7 +8,7 @@ pygame.init()
 screen = pygame.display.set_mode((950, 750))
 
 # Set the title of the window
-pygame.display.set_caption("DriversEd")
+pygame.display.set_caption("Driver's Ed")
 
 #game music
 soundObj = pygame.mixer.Sound("song1.mp3")
@@ -146,6 +146,10 @@ def start_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+            if startButton.rect.collidepoint(pygame.mouse.get_pos()):
+                startButton.image = pygame.image.load("start_button2.png")
+            else:
+                startButton.image = pygame.image.load("start_button.png")
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if startButton.rect.collidepoint(mouse_pos):
@@ -277,7 +281,7 @@ def third_level():
 #start screen
 start = game_start(475,375)
 #start button
-startButton = start_button(475,500)
+startButton = start_button(475,450)
 # vertical intersection
 intersection = Intersection(490, 350)
 # horizontal interesection
