@@ -7,6 +7,10 @@ pygame.init()
 # Set the size of the window
 screen = pygame.display.set_mode((950, 750))
 
+#Game Over Messages
+game_over_mess = ["Failure to Stop", "Failure to Follow Instructions", "Failure to Maintain Lane"]
+game_over_code = 0
+
 # Set the title of the window
 pygame.display.set_caption("Driver's Ed")
 
@@ -14,8 +18,8 @@ pygame.display.set_caption("Driver's Ed")
 soundObj = pygame.mixer.Sound("song1.mp3")
 soundObj.play()
 
-# set timer
-FONT = pygame.font.SysFont("Sans", 30)
+# set font
+FONT = pygame.font.SysFont("Arial", 20)
 TEXT_COLOR = (0, 0, 0)
 start_time = pygame.time.get_ticks()
 
@@ -140,7 +144,7 @@ class Car:
             game_over()
             
 def instructions(num):
-    message = ["Make a Left Turn", "Make a Right Turn", "Go Straight"]
+    message = ["Stop, Turn-Signal, and Make a Left Turn", "Stop, Turn-Signal, and Make a Right Turn", "Stop and Go Straight"]
     screen.blit(FONT.render(message[num], True, "black"), (20, 50))
     diagram = Instruction(120, 650)
     screen.blit(diagram.image, diagram.rect)
@@ -164,7 +168,7 @@ def start_screen():
                 if startButton.rect.collidepoint(mouse_pos):
                     first_level()
 
-def game_over():
+def game_over(code, level):
     grey_list = ['grey1', 'grey2', 'grey3', 'grey4', 'grey5', 'grey6', 'grey7', 'grey8', 'grey9', 'grey10',
           'grey11', 'grey12', 'grey13', 'grey14', 'grey15', 'grey16', 'grey17', 'grey18', 'grey19',
           'grey20', 'grey21', 'grey22', 'grey23', 'grey24', 'grey25', 'grey26', 'grey27', 'grey28',
@@ -181,7 +185,9 @@ def game_over():
         pygame.display.flip()
         pygame.time.delay(10)
     message = ('GAME OVER: Level {} Failed'.format(level))
-    screen.blit(FONT.render(message, True, "white"), (300, 375))
+    screen.blit(FONT.render(message, True, "white"), (375, 375))
+    reason = game_over_mess[code]
+    screen.blit(FONT.render(reason, True, "white"), (375, 400))
     pygame.display.flip()
     pygame.time.delay(1000)
     start_screen()
@@ -219,21 +225,24 @@ def first_level():
                 pygame.quit()
         if player_car.rect.top < 0:
             second_level()
+        elif player_car.rect.left > 850:
+            game_over(1, 1)
+        elif player_car.rect.left < 50:
+            game_over(1, 1)
         #collisions
         if player_car.rect.colliderect(fail1.rect) or player_car.rect.colliderect(fail2.rect) or player_car.rect.colliderect(fail3.rect) or player_car.rect.colliderect(fail4.rect):
-            game_over()
+            game_over(2, 1)
         # check if car is in zone
         if player_car.rect.colliderect(stop.rect) and not in_zone:
             in_zone = True
         # check if car has left zone without stopping
         elif not player_car.rect.colliderect(stop.rect) and in_zone and not stopped:
             # car has left zone without stopping, game over
-            game_over()
+            game_over(0, 1)
         if not stopped:
             if player_car.rect.colliderect(stop.rect):
                 if player_car.speed < 0.1 and player_car.speed > -0.1:
                     stopped = True
-        print(stopped)
         if start_time:
             time_since_enter = (pygame.time.get_ticks() - start_time) / 1000
             message = 'Timer: ' + str(time_since_enter) + ' seconds'
@@ -268,15 +277,19 @@ def second_level():
                 pygame.quit()
         if player_car.rect.left < 50:
             third_level()
+        elif player_car.rect.left > 850:
+            game_over(1, 2)
+        elif player_car.rect.top < 0:
+            game_over(1, 2)
         if player_car.rect.colliderect(fail1.rect) or player_car.rect.colliderect(fail2.rect) or player_car.rect.colliderect(fail3.rect) or player_car.rect.colliderect(fail4.rect):
-            game_over()
+            game_over(2, 2)
         # check if car is in zone
         if player_car.rect.colliderect(stop.rect) and not in_zone:
             in_zone = True
         # check if car has left zone without stopping
         elif not player_car.rect.colliderect(stop.rect) and in_zone and not stopped:
             # car has left zone without stopping, game over
-            game_over()
+            game_over(0, 2)
         if not stopped:
             if player_car.rect.colliderect(stop.rect):
                 if player_car.speed < 0.1 and player_car.speed > -0.1:
@@ -315,15 +328,19 @@ def third_level():
                 pygame.quit()
         if player_car.rect.left > 850:
             print("rightworks")
+        elif player_car.rect.left < 50:
+            game_over(1, 3)
+        elif player_car.rect.top < 0:
+            game_over(1, 3)
         if player_car.rect.colliderect(fail1.rect) or player_car.rect.colliderect(fail2.rect) or player_car.rect.colliderect(fail3.rect) or player_car.rect.colliderect(fail4.rect):
-            game_over()
+            game_over(2, 3)
         # check if car is in zone
         if player_car.rect.colliderect(stop.rect) and not in_zone:
             in_zone = True
         # check if car has left zone without stopping
         elif not player_car.rect.colliderect(stop.rect) and in_zone and not stopped:
             # car has left zone without stopping, game over
-            game_over()
+            game_over(0, 3)
         if not stopped:
             if player_car.rect.colliderect(stop.rect):
                 if player_car.speed < 0.1 and player_car.speed > -0.1:
@@ -346,13 +363,11 @@ intersection1.image = pygame.transform.rotate(intersection1.image, 90)
 #fail zones
 fail1 = Red_Zone(190,110)
 fail2 = Red_Zone(800,110)
-fail3 = Red_Zone(190,580)
-fail4 = Red_Zone(800,580)
+fail3 = Red_Zone(160,580)
+fail4 = Red_Zone(820,580)
 #stop sign and zone that player's car approaches
 sign = Sign(530, 425)
 stop = Stop_Zone(500,500)
-#level number
-level = 1
 #clock
 clock = pygame.time.Clock()
 #start game screen
