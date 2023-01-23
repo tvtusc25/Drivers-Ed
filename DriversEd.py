@@ -8,7 +8,7 @@ pygame.init()
 screen = pygame.display.set_mode((950, 750))
 
 #Game Over Messages
-game_over_mess = ["Failure to Stop", "Failure to Follow Instructions", "Failure to Maintain Lane", "Failure to Use Turn Signal"]
+game_over_mess = ["Failure to Stop", "Failure to Follow Instructions", "Failure to Maintain Lane", "Failure to Use Turn Signal", "You Crashed"]
 game_over_code = 0
 
 # Set the title of the window
@@ -16,6 +16,7 @@ pygame.display.set_caption("Driver's Ed")
 
 #game music
 soundObj = pygame.mixer.Sound("song1.mp3")
+soundObj.set_volume(0.3)
 soundObj.play()
 
 # set font
@@ -102,6 +103,8 @@ class Car:
         self.image = self.original_image.copy()
         self.current_image = self.image
         self.rect = self.image.get_rect()
+        self.turnSound = pygame.mixer.Sound("turnsignal.mp3")
+        
 
     def update(self):
         #friction
@@ -126,33 +129,26 @@ class Car:
                 self.angle -= 2.5
         if keys[pygame.K_UP]:
             self.speed -= 0.2
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    soundObj = pygame.mixer.Sound("carstarting.mp3")
-                    soundObj.play()
         if keys[pygame.K_DOWN]:
             self.speed += 0.2
         if keys[pygame.K_w]:
             self.current_image = self.original_image
             self.image = pygame.transform.rotate(self.current_image, self.angle)
             self.rect = self.image.get_rect(center=(self.x, self.y))
-        if keys[pygame.K_q]:
-            self.current_image = self.turn_left_image
-            self.image = pygame.transform.rotate(self.current_image, self.angle)
-            self.rect = self.image.get_rect(center=(self.x, self.y))
-        if keys[pygame.K_e]:
-            self.current_image = self.turn_right_image
-            self.image = pygame.transform.rotate(self.turn_right_image, self.angle)
-            self.rect = self.image.get_rect(center=(self.x, self.y))
-     
-    
-    
-    
+        for event in pygame.event.get():
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_q:
+                    self.current_image = self.turn_left_image
+                    self.image = pygame.transform.rotate(self.current_image, self.angle)
+                    self.rect = self.image.get_rect(center=(self.x, self.y))
+                    self.turnSound.play()
+                if event.key == pygame.K_e:
+                    self.current_image = self.turn_right_image
+                    self.image = pygame.transform.rotate(self.turn_right_image, self.angle)
+                    self.rect = self.image.get_rect(center=(self.x, self.y))
+                    self.turnSound.play()
 class AIcar:
-    
     def __init__(self, speed, waypoints, imgAngle, loop = False):
-        
-        
         self.original_image = pygame.image.load("car.png")
         self.turn_left_image = pygame.image.load("car_light_left.png")
         self.turn_right_image = pygame.image.load("car_light_right.png")
@@ -164,12 +160,10 @@ class AIcar:
         self.counter = 0
         #SUBJECT TO CHANGE - could be a constant across all AICars
         self.speed = speed
-
         self.waypoints = waypoints
         self.next_point = 0
         self.current = pygame.math.Vector2(self.waypoints[0])
         self.rect.center = self.current
-
         #Sets end point if exists on list
         self.tindex = 1
         if self.tindex < len(self.waypoints) - 1:
@@ -180,17 +174,15 @@ class AIcar:
             self.moving = False
 
     def move(self):
-
         if self.moving:
             distance = self.current.distance_to(self.target)
             if distance > self.speed:
                 self.current = self.current+(self.target-self.current).normalize()*self.speed
                 self.rect.center = self.current
             else:
-                #Moves car to target and get new target from waypoints 
+                #Moves car to target and get new target from waypoints
                 self.current = self.target
                 self.rect.center = self.current
-
                 #Set next end point if exists on list
                 self.tindex += 1
                 if self.tindex < len(self.waypoints):
@@ -201,9 +193,6 @@ class AIcar:
                     else:
                         self.moving = False
 
-        
-            
-            
             
 def instructions(num):
     message = ["Stop, Turn-Signal, and Make a Left Turn", "Stop, Turn-Signal, and Make a Right Turn", "Stop and Go Straight"]
@@ -293,18 +282,14 @@ def first_level():
         screen.blit(player_car.image, player_car.rect)
         #blit sign
         screen.blit(sign.image, sign.rect)
-        # checks if player crosses a certain point on map, can be used to translate to level two
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-            keys = pygame.key.get_pressed()
-            if player_car.speed > 0.1 or player_car.speed < -0.1:
-                if keys[pygame.K_LEFT]:
-                    if player_car.current_image != player_car.turn_left_image:
-                        game_over(3,1)
-                if keys[pygame.K_RIGHT]:
-                    if player_car.current_image != player_car.turn_right_image:
-                        game_over(3,1)
+        keys = pygame.key.get_pressed()
+        if player_car.speed > 0.1 or player_car.speed < -0.1:
+            if keys[pygame.K_LEFT]:
+                if player_car.current_image != player_car.turn_left_image:
+                    game_over(3,1)
+            if keys[pygame.K_RIGHT]:
+                if player_car.current_image != player_car.turn_right_image:
+                    game_over(3,1)
         #road direction win/lose
         if player_car.rect.top < 0:
             second_level()
@@ -366,25 +351,24 @@ def second_level():
         screen.blit(player_car.image, player_car.rect)
         screen.blit(sign.image, sign.rect)
         # checks if player crosses a certain point on map, can be used to translate to level two
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-            keys = pygame.key.get_pressed()
-            if player_car.speed > 0.1 or player_car.speed < -0.1:
-                if keys[pygame.K_LEFT]:
-                    if player_car.current_image != player_car.turn_left_image:
-                        game_over(3,2)
-                if keys[pygame.K_RIGHT]:
-                    if player_car.current_image != player_car.turn_right_image:
-                        game_over(3,2)
+        keys = pygame.key.get_pressed()
+        if player_car.speed > 0.1 or player_car.speed < -0.1:
+            if keys[pygame.K_LEFT]:
+                if player_car.current_image != player_car.turn_left_image:
+                    game_over(3,2)
+            if keys[pygame.K_RIGHT]:
+                if player_car.current_image != player_car.turn_right_image:
+                    game_over(3,2)
         if player_car.rect.left < 50:
             third_level()
         elif player_car.rect.left > 850:
             game_over(1, 2)
         elif player_car.rect.top < 0:
             game_over(1, 2)
-        if player_car.rect.colliderect(fail1.rect) or player_car.rect.colliderect(fail2.rect) or player_car.rect.colliderect(fail3.rect) or player_car.rect.colliderect(fail4.rect) or player_car.rect.colliderect(aiCar.rect):
+        if player_car.rect.colliderect(fail1.rect) or player_car.rect.colliderect(fail2.rect) or player_car.rect.colliderect(fail3.rect) or player_car.rect.colliderect(fail4.rect):
             game_over(2, 2)
+        if player_car.rect.colliderect(aiCar.rect):
+            game_over(4, 2)
         # check if car is in zone
         if player_car.rect.colliderect(stop.rect) and not in_zone:
             in_zone = True
@@ -426,17 +410,14 @@ def third_level():
         screen.blit(player_car.image, player_car.rect)
         screen.blit(sign.image, sign.rect)
         # checks if player crosses a certain point on map, can be used to translate to level two
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-            keys = pygame.key.get_pressed()
-            if player_car.speed > 0.1 or player_car.speed < -0.1:
-                if keys[pygame.K_LEFT]:
-                    if player_car.current_image != player_car.turn_left_image:
-                        game_over(3,3)
-                if keys[pygame.K_RIGHT]:
-                    if player_car.current_image != player_car.turn_right_image:
-                        game_over(3,3)
+        keys = pygame.key.get_pressed()
+        if player_car.speed > 0.1 or player_car.speed < -0.1:
+            if keys[pygame.K_LEFT]:
+                if player_car.current_image != player_car.turn_left_image:
+                    game_over(3,1)
+            if keys[pygame.K_RIGHT]:
+                if player_car.current_image != player_car.turn_right_image:
+                    game_over(3,1)
         if player_car.rect.left > 850:
             win(time)
         elif player_car.rect.left < 50:
