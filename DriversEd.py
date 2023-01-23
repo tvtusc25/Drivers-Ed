@@ -126,6 +126,10 @@ class Car:
                 self.angle -= 2.5
         if keys[pygame.K_UP]:
             self.speed -= 0.2
+            for event in pygame.event.get():
+                if event.type == pygame.KEYUP:
+                    soundObj = pygame.mixer.Sound("carstarting.mp3")
+                    soundObj.play()
         if keys[pygame.K_DOWN]:
             self.speed += 0.2
         if keys[pygame.K_w]:
@@ -140,8 +144,6 @@ class Car:
             self.current_image = self.turn_right_image
             self.image = pygame.transform.rotate(self.turn_right_image, self.angle)
             self.rect = self.image.get_rect(center=(self.x, self.y))
-        if keys[pygame.K_1]:
-            game_over()
             
 def instructions(num):
     message = ["Stop, Turn-Signal, and Make a Left Turn", "Stop, Turn-Signal, and Make a Right Turn", "Stop and Go Straight"]
