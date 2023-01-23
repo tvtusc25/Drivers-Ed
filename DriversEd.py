@@ -144,6 +144,66 @@ class Car:
             self.current_image = self.turn_right_image
             self.image = pygame.transform.rotate(self.turn_right_image, self.angle)
             self.rect = self.image.get_rect(center=(self.x, self.y))
+     
+    
+    
+    
+class AIcar:
+    
+    def __init__(self, speed, waypoints, imgAngle, loop = False):
+        
+        
+        self.original_image = pygame.image.load("car.png")
+        self.turn_left_image = pygame.image.load("car_light_left.png")
+        self.turn_right_image = pygame.image.load("car_light_right.png")
+        self.image = self.original_image.copy()
+        self.current_image = self.image
+        self.rect = self.image.get_rect()
+        self.image = pygame.transform.rotate(self.current_image, imgAngle)
+        self.loop = loop
+        self.counter = 0
+        #SUBJECT TO CHANGE - could be a constant across all AICars
+        self.speed = speed
+
+        self.waypoints = waypoints
+        self.next_point = 0
+        self.current = pygame.math.Vector2(self.waypoints[0])
+        self.rect.center = self.current
+
+        #Sets end point if exists on list
+        self.tindex = 1
+        if self.tindex < len(self.waypoints) - 1:
+            self.target = pygame.math.Vector2(self.waypoints[self.tindex])
+            self.moving = True
+        else:
+            self.target = self.current
+            self.moving = False
+
+    def move(self):
+
+        if self.moving:
+            distance = self.current.distance_to(self.target)
+            if distance > self.speed:
+                self.current = self.current+(self.target-self.current).normalize()*self.speed
+                self.rect.center = self.current
+            else:
+                #Moves car to target and get new target from waypoints 
+                self.current = self.target
+                self.rect.center = self.current
+
+                #Set next end point if exists on list
+                self.tindex += 1
+                if self.tindex < len(self.waypoints):
+                    self.target = pygame.math.Vector2(self.waypoints[self.tindex])
+                else:
+                    if self.loop:
+                        self.tindex = 0
+                    else:
+                        self.moving = False
+
+        
+            
+            
             
 def instructions(num):
     message = ["Stop, Turn-Signal, and Make a Left Turn", "Stop, Turn-Signal, and Make a Right Turn", "Stop and Go Straight"]
@@ -277,6 +337,8 @@ def second_level():
     stopped = False
     in_zone = False
     player_car = Car(503, 710)
+    waypoints = [(-100, 385), (400, 385), (1100, 385)]
+    aiCar = AIcar(2, waypoints, 0, False)
     while True:
         clock.tick(50)
         pygame.event.pump()
@@ -289,7 +351,16 @@ def second_level():
         screen.fill((0, 255, 0))
         screen.blit(intersection.image, intersection.rect)
         screen.blit(intersection1.image, intersection1.rect)
+        screen.blit(aiCar.image, aiCar.rect)
         instructions(0)
+        pauseTime = 10
+        if((330 > aiCar.current[0] or aiCar.current[0] > 360) or aiCar.counter >= pauseTime):
+            aiCar.move()
+        if(330 <= aiCar.current[0] and aiCar.current[0] <= 360 and aiCar.counter < pauseTime):
+            aiCar.counter += 1
+            aiCar.waypoints.append((355,385))
+        if(aiCar.counter == pauseTime - 1):
+            aiCar.waypoints = [(400,385), (1100, 385), (1200, 385)]
         player_car.handle_keys()
         player_car.update()
         screen.blit(player_car.image, player_car.rect)
@@ -312,7 +383,7 @@ def second_level():
             game_over(1, 2)
         elif player_car.rect.top < 0:
             game_over(1, 2)
-        if player_car.rect.colliderect(fail1.rect) or player_car.rect.colliderect(fail2.rect) or player_car.rect.colliderect(fail3.rect) or player_car.rect.colliderect(fail4.rect):
+        if player_car.rect.colliderect(fail1.rect) or player_car.rect.colliderect(fail2.rect) or player_car.rect.colliderect(fail3.rect) or player_car.rect.colliderect(fail4.rect) or player_car.rect.colliderect(aiCar.rect):
             game_over(2, 2)
         # check if car is in zone
         if player_car.rect.colliderect(stop.rect) and not in_zone:
