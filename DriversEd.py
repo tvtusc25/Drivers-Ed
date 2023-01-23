@@ -127,7 +127,7 @@ class Car:
         if keys[pygame.K_UP]:
             self.speed -= 0.2
             for event in pygame.event.get():
-                if event.type == pygame.KEYUP:
+                if event.type == pygame.KEYDOWN:
                     soundObj = pygame.mixer.Sound("carstarting.mp3")
                     soundObj.play()
         if keys[pygame.K_DOWN]:
