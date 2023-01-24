@@ -16,11 +16,11 @@ pygame.display.set_caption("Driver's Ed")
 
 #game music
 soundObj = pygame.mixer.Sound("song1.mp3")
-soundObj.set_volume(0.1)
+soundObj.set_volume(0.3)
 soundObj.play()
 
 # set font
-FONT = pygame.font.SysFont("Arial", 20)
+FONT = pygame.font.SysFont("Arial", 20, bold=True)
 TEXT_COLOR = (0, 0, 0)
 start_time = pygame.time.get_ticks()
 
@@ -88,7 +88,6 @@ class Car:
         self.current_image = self.image
         self.rect = self.image.get_rect()
         self.turnSound = pygame.mixer.Sound("turnsignal.mp3")
-        self.startSound = pygame.mixer.Sound("carstarting.mp3")
         
 
     def update(self):
@@ -133,11 +132,7 @@ class Car:
                     self.current_image = self.turn_right_image
                     self.image = pygame.transform.rotate(self.turn_right_image, self.angle)
                     self.rect = self.image.get_rect(center=(self.x, self.y))
-                    self.turnSound.set_volume(1)
                     self.turnSound.play()
-                if event.key == pygame.K_UP:
-                    self.startSound.set_volume(0.1)
-                    self.startSound.play()
 class AIcar:
     def __init__(self, speed, waypoints, imgAngle, loop = False):
         self.original_image = pygame.image.load("car.png")
@@ -224,14 +219,14 @@ def game_over(code, level):
     for i in range(95, -1, -1):
         pygame.draw.rect(screen, grey_list[i], pygame.Rect(0,0, screen.get_size()[0], screen.get_size()[1]))
         pygame.display.flip()
-        pygame.time.delay(20)
+        pygame.time.delay(10)
     message = ('GAME OVER: Level {} Failed'.format(level))
     screen.blit(FONT.render(message, True, "white"), (375, 375))
     reason = game_over_mess[code]
     screen.blit(FONT.render(reason, True, "white"), (375, 400))
     pygame.display.flip()
-    pygame.time.delay(3000)
-    start_screen()
+    pygame.time.delay(1000)
+    first_level()
 
 def win(time):
     green_list = ['green4', 'green3', 'green2', 'green1']
@@ -299,8 +294,9 @@ def first_level():
                     stopped = True
         if start_time:
             time_since_enter = (pygame.time.get_ticks() - start_time) / 1000
-            message = 'Timer: ' + str(time_since_enter) + ' seconds'
-            screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
+            formatted_time = "{:.1f}".format(time_since_enter)
+            message = 'Timer: ' + str(formatted_time) + ' seconds'
+            screen.blit(FONT.render(message, True, "black"), (20, 20))
         pygame.display.flip()
 
 def second_level():
@@ -366,7 +362,8 @@ def second_level():
                     stopped = True
         if start_time:
             time_since_enter = (pygame.time.get_ticks() - start_time) / 1000
-            message = 'Timer: ' + str(time_since_enter) + ' seconds'
+            formatted_time = "{:.1f}".format(time_since_enter)
+            message = 'Timer: ' + str(formatted_time) + ' seconds'
             screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
         pygame.display.flip()
         
@@ -400,7 +397,7 @@ def third_level():
                 if player_car.current_image != player_car.turn_right_image:
                     game_over(3,1)
         if player_car.rect.left > 850:
-            win(time)
+            win(formatted_time)
         elif player_car.rect.left < 50:
             game_over(1, 3)
         elif player_car.rect.top < 0:
@@ -420,9 +417,9 @@ def third_level():
                     stopped = True
         if start_time:
             time_since_enter = (pygame.time.get_ticks() - start_time) / 1000
-            message = 'Timer: ' + str(time_since_enter) + ' seconds'
-            time = time_since_enter
-            screen.blit(FONT.render(message, True, "black"), (20, 20))
+            formatted_time = "{:.1f}".format(time_since_enter)
+            message = 'Timer: ' + str(formatted_time) + ' seconds'
+            screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
         pygame.display.flip()
  
 #start screen
