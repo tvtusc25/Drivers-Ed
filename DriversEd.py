@@ -17,7 +17,7 @@ pygame.display.set_caption("Driver's Ed")
 #game music
 soundObj = pygame.mixer.Sound("song1.mp3")
 soundObj.set_volume(0.3)
-soundObj.play()
+soundObj.play(-1)
 
 # set font
 FONT = pygame.font.SysFont("Arial", 20, bold=True)
@@ -88,6 +88,7 @@ class Car:
         self.current_image = self.image
         self.rect = self.image.get_rect()
         self.turnSound = pygame.mixer.Sound("turnsignal.mp3")
+        self.turnSound.set_volume(1.2)
         
 
     def update(self):
@@ -219,13 +220,13 @@ def game_over(code, level):
     for i in range(95, -1, -1):
         pygame.draw.rect(screen, grey_list[i], pygame.Rect(0,0, screen.get_size()[0], screen.get_size()[1]))
         pygame.display.flip()
-        pygame.time.delay(10)
+        pygame.time.delay(20)
     message = ('GAME OVER: Level {} Failed'.format(level))
     screen.blit(FONT.render(message, True, "white"), (375, 375))
     reason = game_over_mess[code]
     screen.blit(FONT.render(reason, True, "white"), (375, 400))
     pygame.display.flip()
-    pygame.time.delay(1000)
+    pygame.time.delay(3000)
     first_level()
 
 def win(time):
@@ -430,9 +431,9 @@ startButton = start_button(475,450)
 background = Background(475,375)
 #fail zones
 fail1 = Red_Zone(190,110)
-fail2 = Red_Zone(800,110)
+fail2 = Red_Zone(800,160)
 fail3 = Red_Zone(160,580)
-fail4 = Red_Zone(820,580)
+fail4 = Red_Zone(820,620)
 #stop zone
 stop = Stop_Zone(500,500)
 #clock
