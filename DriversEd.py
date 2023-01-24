@@ -224,13 +224,13 @@ def game_over(code, level):
     for i in range(95, -1, -1):
         pygame.draw.rect(screen, grey_list[i], pygame.Rect(0,0, screen.get_size()[0], screen.get_size()[1]))
         pygame.display.flip()
-        pygame.time.delay(10)
+        pygame.time.delay(20)
     message = ('GAME OVER: Level {} Failed'.format(level))
     screen.blit(FONT.render(message, True, "white"), (375, 375))
     reason = game_over_mess[code]
     screen.blit(FONT.render(reason, True, "white"), (375, 400))
     pygame.display.flip()
-    pygame.time.delay(1000)
+    pygame.time.delay(3000)
     start_screen()
 
 def win(time):
