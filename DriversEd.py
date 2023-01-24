@@ -40,14 +40,6 @@ class start_button:
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
 
-class Grass:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.image = pygame.image.load("grass.png")
-        self.rect = self.image.get_rect()
-        self.rect.center = (self.x, self.y)
-
 class Instruction:
     def __init__(self, x, y):
         self.x = x
@@ -55,20 +47,12 @@ class Instruction:
         self.image = pygame.image.load("diagram.png")
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
-
-class Intersection:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.image = pygame.image.load("FinalIntersection.png")
-        self.rect = self.image.get_rect()
-        self.rect.center = (self.x, self.y)
         
-class Sign:
+class Background:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.image = pygame.image.load("stop_sign.png")
+        self.image = pygame.image.load("background.png")
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
         
@@ -136,6 +120,8 @@ class Car:
             self.image = pygame.transform.rotate(self.current_image, self.angle)
             self.rect = self.image.get_rect(center=(self.x, self.y))
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_q:
                     self.current_image = self.turn_left_image
@@ -193,7 +179,6 @@ class AIcar:
                     else:
                         self.moving = False
 
-            
 def instructions(num):
     message = ["Stop, Turn-Signal, and Make a Left Turn", "Stop, Turn-Signal, and Make a Right Turn", "Stop and Go Straight"]
     screen.blit(FONT.render(message[num], True, "black"), (20, 50))
@@ -270,18 +255,14 @@ def first_level():
         screen.blit(fail2.image, fail2.rect)
         screen.blit(fail3.image, fail3.rect)
         screen.blit(fail4.image, fail4.rect)
-        screen.fill((0, 255, 0))
-        #blit intersections
-        screen.blit(intersection.image, intersection.rect)
-        screen.blit(intersection1.image, intersection1.rect)
+        #blit background
+        screen.blit(background.image, background.rect)
         #go straight instruction
         instructions(2)
         #blit car and update
         player_car.handle_keys()
         player_car.update()
         screen.blit(player_car.image, player_car.rect)
-        #blit sign
-        screen.blit(sign.image, sign.rect)
         keys = pygame.key.get_pressed()
         if player_car.speed > 0.1 or player_car.speed < -0.1:
             if keys[pygame.K_LEFT]:
@@ -333,9 +314,8 @@ def second_level():
         screen.blit(fail2.image, fail2.rect)
         screen.blit(fail3.image, fail3.rect)
         screen.blit(fail4.image, fail4.rect)
-        screen.fill((0, 255, 0))
-        screen.blit(intersection.image, intersection.rect)
-        screen.blit(intersection1.image, intersection1.rect)
+        #blit background
+        screen.blit(background.image, background.rect)
         screen.blit(aiCar.image, aiCar.rect)
         instructions(0)
         pauseTime = 10
@@ -349,7 +329,6 @@ def second_level():
         player_car.handle_keys()
         player_car.update()
         screen.blit(player_car.image, player_car.rect)
-        screen.blit(sign.image, sign.rect)
         # checks if player crosses a certain point on map, can be used to translate to level two
         keys = pygame.key.get_pressed()
         if player_car.speed > 0.1 or player_car.speed < -0.1:
@@ -401,14 +380,11 @@ def third_level():
         screen.blit(fail2.image, fail2.rect)
         screen.blit(fail3.image, fail3.rect)
         screen.blit(fail4.image, fail4.rect)
-        screen.fill((0, 255, 0))
-        screen.blit(intersection.image, intersection.rect)
-        screen.blit(intersection1.image, intersection1.rect)
+        screen.blit(background.image, background.rect)
         instructions(1)
         player_car.handle_keys()
         player_car.update()
         screen.blit(player_car.image, player_car.rect)
-        screen.blit(sign.image, sign.rect)
         # checks if player crosses a certain point on map, can be used to translate to level two
         keys = pygame.key.get_pressed()
         if player_car.speed > 0.1 or player_car.speed < -0.1:
@@ -443,23 +419,19 @@ def third_level():
             time = time_since_enter
             screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
         pygame.display.flip()
-        
+ 
 #start screen
 start = game_start(475,375)
 #start button
 startButton = start_button(475,450)
-# vertical intersection
-intersection = Intersection(490, 350)
-# horizontal interesection
-intersection1 = Intersection(39, 774)
-intersection1.image = pygame.transform.rotate(intersection1.image, 90)
+#background
+background = Background(475,375)
 #fail zones
 fail1 = Red_Zone(190,110)
 fail2 = Red_Zone(800,110)
 fail3 = Red_Zone(160,580)
 fail4 = Red_Zone(820,580)
-#stop sign and zone that player's car approaches
-sign = Sign(530, 425)
+#stop zone
 stop = Stop_Zone(500,500)
 #clock
 clock = pygame.time.Clock()
