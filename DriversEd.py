@@ -279,6 +279,8 @@ def first_level():
             game_over(1, 1)
         elif player_car.rect.left < 50:
             game_over(1, 1)
+        elif player_car.rect.top > 735:
+            player_car.speed -= 0.2
         #collisions
         if player_car.rect.colliderect(fail1.rect) or player_car.rect.colliderect(fail2.rect) or player_car.rect.colliderect(fail3.rect) or player_car.rect.colliderect(fail4.rect):
             game_over(2, 1)
