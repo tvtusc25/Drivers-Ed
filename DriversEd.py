@@ -16,7 +16,7 @@ pygame.display.set_caption("Driver's Ed")
 
 #game music
 soundObj = pygame.mixer.Sound("song1.mp3")
-soundObj.set_volume(0.3)
+soundObj.set_volume(0.1)
 soundObj.play()
 
 # set font
@@ -88,6 +88,7 @@ class Car:
         self.current_image = self.image
         self.rect = self.image.get_rect()
         self.turnSound = pygame.mixer.Sound("turnsignal.mp3")
+        self.startSound = pygame.mixer.Sound("carstarting.mp3")
         
 
     def update(self):
@@ -132,7 +133,11 @@ class Car:
                     self.current_image = self.turn_right_image
                     self.image = pygame.transform.rotate(self.turn_right_image, self.angle)
                     self.rect = self.image.get_rect(center=(self.x, self.y))
+                    self.turnSound.set_volume(1)
                     self.turnSound.play()
+                if event.key == pygame.K_UP:
+                    self.startSound.set_volume(0.1)
+                    self.startSound.play()
 class AIcar:
     def __init__(self, speed, waypoints, imgAngle, loop = False):
         self.original_image = pygame.image.load("car.png")
@@ -417,7 +422,7 @@ def third_level():
             time_since_enter = (pygame.time.get_ticks() - start_time) / 1000
             message = 'Timer: ' + str(time_since_enter) + ' seconds'
             time = time_since_enter
-            screen.blit(FONT.render(message, True, TEXT_COLOR), (20, 20))
+            screen.blit(FONT.render(message, True, "black"), (20, 20))
         pygame.display.flip()
  
 #start screen
