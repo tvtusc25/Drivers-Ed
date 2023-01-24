@@ -89,6 +89,7 @@ class Car:
         self.rect = self.image.get_rect()
         self.turnSound = pygame.mixer.Sound("turnsignal.mp3")
         self.turnSound.set_volume(1.2)
+        self.startSound = pygame.mixer.Sound("carstarting.mp3")
         
 
     def update(self):
@@ -134,6 +135,10 @@ class Car:
                     self.image = pygame.transform.rotate(self.turn_right_image, self.angle)
                     self.rect = self.image.get_rect(center=(self.x, self.y))
                     self.turnSound.play()
+                if event.key == pygame.K_UP:
+                    self.startSound.set_volume(0.1)
+                    self.startSound.play()
+
 class AIcar:
     def __init__(self, speed, waypoints, imgAngle, loop = False):
         self.original_image = pygame.image.load("car.png")
@@ -206,6 +211,9 @@ def start_screen():
                     first_level()
 
 def game_over(code, level):
+    level_fail_song = pygame.mixer.Sound("level_complete.mp3")
+    level_fail_song.set_volume(1)
+    level_fail_song.play()
     grey_list = ['grey1', 'grey2', 'grey3', 'grey4', 'grey5', 'grey6', 'grey7', 'grey8', 'grey9', 'grey10',
           'grey11', 'grey12', 'grey13', 'grey14', 'grey15', 'grey16', 'grey17', 'grey18', 'grey19',
           'grey20', 'grey21', 'grey22', 'grey23', 'grey24', 'grey25', 'grey26', 'grey27', 'grey28',
@@ -274,6 +282,9 @@ def first_level():
                     game_over(3,1)
         #road direction win/lose
         if player_car.rect.top < 0:
+            level_complete_song = pygame.mixer.Sound("level_complete.mp3")
+            level_complete_song.set_volume(1)
+            level_complete_song.play()
             second_level()
         elif player_car.rect.left > 850:
             game_over(1, 1)
@@ -343,6 +354,9 @@ def second_level():
                 if player_car.current_image != player_car.turn_right_image:
                     game_over(3,2)
         if player_car.rect.left < 50:
+            level_complete_song = pygame.mixer.Sound("level_complete.mp3")
+            level_complete_song.set_volume(1)
+            level_complete_song.play()
             third_level()
         elif player_car.rect.left > 850:
             game_over(1, 2)
@@ -351,6 +365,9 @@ def second_level():
         if player_car.rect.colliderect(fail1.rect) or player_car.rect.colliderect(fail2.rect) or player_car.rect.colliderect(fail3.rect) or player_car.rect.colliderect(fail4.rect):
             game_over(2, 2)
         if player_car.rect.colliderect(aiCar.rect):
+            car_crash_song = pygame.mixer.Sound("car_crash.mp3")
+            car_crash_song.set_volume(1)
+            car_crash_song.play()
             game_over(4, 2)
         # check if car is in zone
         if player_car.rect.colliderect(stop.rect) and not in_zone:
@@ -400,6 +417,9 @@ def third_level():
                 if player_car.current_image != player_car.turn_right_image:
                     game_over(3,1)
         if player_car.rect.left > 850:
+            win_song = pygame.mixer.Sound("game_win.mp3")
+            win_song.set_volume(1)
+            win_song.play()
             win(formatted_time)
         elif player_car.rect.left < 50:
             game_over(1, 3)
