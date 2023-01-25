@@ -140,10 +140,16 @@ class Car:
                     self.startSound.play()
 
 class AIcar:
-    def __init__(self, speed, waypoints, imgAngle, loop = False):
-        self.original_image = pygame.image.load("car.png")
-        self.turn_left_image = pygame.image.load("car_light_left.png")
-        self.turn_right_image = pygame.image.load("car_light_right.png")
+    def __init__(self, speed, waypoints, imgAngle, car, loop = False):
+        if car == "truck":
+            self.original_image = pygame.image.load("car_2.png")
+            self.turn_left_image = pygame.image.load("car_2_light_left.png")
+            self.turn_right_image = pygame.image.load("car_2_light_right.png")
+        else:
+            self.original_image = pygame.image.load("car_3.png")
+            self.turn_left_image = pygame.image.load("car_3_light_left.png")
+            self.turn_right_image = pygame.image.load("car_3_light_right.png")
+
         self.image = self.original_image.copy()
         self.current_image = self.image
         self.rect = self.image.get_rect()
@@ -191,8 +197,8 @@ def instructions(num):
     screen.blit(diagram.image, diagram.rect)
 
 def start_screen():
-    waypoints = [(-100, 550), (450, 550), (1100, 550)]
-    aiCar = AIcar(4, waypoints, 0, False)
+    waypoints = [(-100, 575), (450, 575), (1100, 575)]
+    aiCar = AIcar(4, waypoints, 270, "truck", False)
     while True:
         screen.blit(start.image, start.rect)
         screen.blit(startButton.image, startButton.rect)
@@ -321,8 +327,8 @@ def second_level():
     stopped = False
     in_zone = False
     player_car = Car(503, 710)
-    waypoints = [(457, -100), (457, 400), (457, 1100)]
-    aiCar = AIcar(2, waypoints, 270, False)
+    waypoints = [(450, -100), (450, 400), (450, 1100)]
+    aiCar = AIcar(2, waypoints, 180, "truck", False)
     while True:
         clock.tick(50)
         pygame.event.pump()
@@ -402,10 +408,10 @@ def third_level():
     in_zone = False
     player_car = Car(503, 710)
     time = 0
-    waypoints = [(-100, 385), (400, 385), (1100, 385)]
-    aiCar = AIcar(4, waypoints, 0, False)
-    waypoints2 = [(-500, 385), (400, 385), (1100, 385)]
-    aiCar2 = AIcar(4, waypoints2, 0, False)
+    waypoints = [(-100, 422), (400, 422), (1100, 422)]
+    aiCar = AIcar(4, waypoints, 270, "truck", False)
+    waypoints2 = [(-500, 415), (400, 415), (1100, 415)]
+    aiCar2 = AIcar(4, waypoints2, 270, "Modern", False)
     while True:
         clock.tick(50)
         pygame.event.pump()
@@ -422,9 +428,9 @@ def third_level():
         screen.blit(aiCar2.image, aiCar2.rect)
         instructions(1)
         if((1050 < aiCar.current[0] and aiCar.current[0] < 1100)):
-            aiCar = AIcar(4, waypoints, 0, False)
+            aiCar = AIcar(4, waypoints, 270, "truck", False)
         if((1050 < aiCar2.current[0] and aiCar2.current[0] < 1100)):
-            aiCar2 = AIcar(4, waypoints, 0, False)
+            aiCar2 = AIcar(4, waypoints2, 270, "Modern", False)
         player_car.handle_keys()
         player_car.update()
         screen.blit(player_car.image, player_car.rect)
@@ -479,6 +485,8 @@ fail3 = Red_Zone(160,580)
 fail4 = Red_Zone(820,620)
 #stop zone
 stop = Stop_Zone(500,500)
+
+
 #clock
 clock = pygame.time.Clock()
 #start game screen
