@@ -354,7 +354,7 @@ def second_level():
         if(aiCar.counter == pauseTime - 1):
             aiCar.waypoints = [(457,400), (457, 1100), (457, 1200)]
             screen.blit(aiCar.image, aiCar.rect)
-        if((1050 < aiCar.current[0] and aiCar.current[0] < 1100)):
+        if((1050 < aiCar.current[1] and aiCar.current[1] < 1100)):
             aiCar = AIcar(2, waypoints, 270, False)
         player_car.handle_keys()
         player_car.update()
