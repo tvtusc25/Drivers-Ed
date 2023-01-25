@@ -150,7 +150,6 @@ class AIcar:
         self.image = pygame.transform.rotate(self.current_image, imgAngle)
         self.loop = loop
         self.counter = 0
-        #SUBJECT TO CHANGE - could be a constant across all AICars
         self.speed = speed
         self.waypoints = waypoints
         self.next_point = 0
@@ -192,9 +191,13 @@ def instructions(num):
     screen.blit(diagram.image, diagram.rect)
 
 def start_screen():
+    waypoints = [(-100, 550), (450, 550), (1100, 550)]
+    aiCar = AIcar(4, waypoints, 0, False)
     while True:
         screen.blit(start.image, start.rect)
         screen.blit(startButton.image, startButton.rect)
+        screen.blit(aiCar.image, aiCar.rect)
+        aiCar.move()
         pygame.display.flip()
         clock.tick(50)
         pygame.event.pump()
@@ -318,8 +321,8 @@ def second_level():
     stopped = False
     in_zone = False
     player_car = Car(503, 710)
-    waypoints = [(-100, 385), (400, 385), (1100, 385)]
-    aiCar = AIcar(2, waypoints, 0, False)
+    waypoints = [(457, -100), (457, 400), (457, 1100)]
+    aiCar = AIcar(2, waypoints, 270, False)
     while True:
         clock.tick(50)
         pygame.event.pump()
@@ -331,16 +334,22 @@ def second_level():
         screen.blit(fail4.image, fail4.rect)
         #blit background
         screen.blit(background.image, background.rect)
-        screen.blit(aiCar.image, aiCar.rect)
         instructions(0)
-        pauseTime = 10
-        if((330 > aiCar.current[0] or aiCar.current[0] > 360) or aiCar.counter >= pauseTime):
+        pauseTime = 20
+        minStop = 270
+        maxStop = 300
+        if((minStop > aiCar.current[1] or aiCar.current[1] > maxStop) or aiCar.counter >= pauseTime):
             aiCar.move()
-        if(330 <= aiCar.current[0] and aiCar.current[0] <= 360 and aiCar.counter < pauseTime):
+            screen.blit(aiCar.image, aiCar.rect)
+        if(minStop <= aiCar.current[1] and aiCar.current[1] <= maxStop and aiCar.counter < pauseTime):
             aiCar.counter += 1
-            aiCar.waypoints.append((355,385))
+            aiCar.waypoints.append(((maxStop - 5),457))
+            screen.blit(aiCar.image, aiCar.rect)
         if(aiCar.counter == pauseTime - 1):
-            aiCar.waypoints = [(400,385), (1100, 385), (1200, 385)]
+            aiCar.waypoints = [(457,400), (457, 1100), (457, 1200)]
+            screen.blit(aiCar.image, aiCar.rect)
+        if((1050 < aiCar.current[0] and aiCar.current[0] < 1100)):
+            aiCar = AIcar(2, waypoints, 270, False)
         player_car.handle_keys()
         player_car.update()
         screen.blit(player_car.image, player_car.rect)
@@ -393,6 +402,10 @@ def third_level():
     in_zone = False
     player_car = Car(503, 710)
     time = 0
+    waypoints = [(-100, 385), (400, 385), (1100, 385)]
+    aiCar = AIcar(4, waypoints, 0, False)
+    waypoints2 = [(-500, 385), (400, 385), (1100, 385)]
+    aiCar2 = AIcar(4, waypoints2, 0, False)
     while True:
         clock.tick(50)
         pygame.event.pump()
@@ -403,7 +416,15 @@ def third_level():
         screen.blit(fail3.image, fail3.rect)
         screen.blit(fail4.image, fail4.rect)
         screen.blit(background.image, background.rect)
+        screen.blit(aiCar.image, aiCar.rect)
+        aiCar.move()
+        aiCar2.move()
+        screen.blit(aiCar2.image, aiCar2.rect)
         instructions(1)
+        if((1050 < aiCar.current[0] and aiCar.current[0] < 1100)):
+            aiCar = AIcar(4, waypoints, 0, False)
+        if((1050 < aiCar2.current[0] and aiCar2.current[0] < 1100)):
+            aiCar2 = AIcar(4, waypoints, 0, False)
         player_car.handle_keys()
         player_car.update()
         screen.blit(player_car.image, player_car.rect)
